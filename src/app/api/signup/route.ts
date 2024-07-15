@@ -1,5 +1,5 @@
 import dbConnect from "@/lib/dbConnect";
-import { NextRequest, NextResponse } from "next/server";
+import { sendEmail } from "@/helpers/sendEmail";
 import UserModel from "@/models/User";
 import bcrypt from 'bcrypt';
 
@@ -62,7 +62,16 @@ export const POST = async(request: Request) => {
             })
         }
 
-        //email logic
+       const emailResponse = await sendEmail({email: email, username: username, verifyCode: verifyCode, type: "verify", message: "", name: fullName});
+       
+       if(!emailResponse.success){
+        return Response.json({
+            success: false,
+            message: emailResponse.message
+        }, {
+            status: 500
+        })
+       }
 
         return Response.json({
             success:true,

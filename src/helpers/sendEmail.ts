@@ -1,2 +1,4 @@
 import {resend} from '@/lib/resend';
-import 
+import verficationEmail from "../../emails/VerificationEmail";
+
+

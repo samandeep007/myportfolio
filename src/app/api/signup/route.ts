@@ -18,10 +18,10 @@ export const POST = async (request: Request) => {
     // Check if the username is already taken
     const existingUserByUsername = await UserModel.findOne({ username, isVerified: true });
     if (existingUserByUsername) {
-      return new Response(JSON.stringify({
+      return Response.json({
         success: false,
         message: "Username is already taken!"
-      }), {
+      }, {
         status: 400
       });
     }
@@ -38,10 +38,10 @@ export const POST = async (request: Request) => {
     const existingUserByEmail = await UserModel.findOne({ email });
     if (existingUserByEmail) {
       if (existingUserByEmail.isVerified) {
-        return new Response(JSON.stringify({
+        return Response.json({
           success: false,
           message: "User already exists with this email"
-        }), {
+        }, {
           status: 400
         });
       } else {
@@ -77,10 +77,10 @@ export const POST = async (request: Request) => {
     });
 
     if (!emailResponse.success) {
-      return new Response(JSON.stringify({
+      return Response.json({
         success: false,
         message: emailResponse.message
-      }), {
+      }, {
         status: 500
       });
     }
@@ -93,10 +93,10 @@ export const POST = async (request: Request) => {
     });
 
   } catch (error) {
-    return new Response(JSON.stringify({
+    return Response.json({
       success: false,
       message: "User registration failed!"
-    }), {
+    }, {
       status: 400
     });
   }

@@ -36,6 +36,7 @@ export const MessageSchema: Schema<Message> = new Schema({
 
 export interface User extends Document {
     username: string;
+    fullName: string;
     email: string;
     password: string;
     isVerified: boolean;
@@ -51,6 +52,12 @@ export const UserSchema: Schema<User> = new Schema({
         trim: true,
         lowercase: true,
         unique: true
+    },
+
+    fullName: {
+        type: String,
+        required: [true, "Name is required"],
+        trim: true
     },
 
     email: {

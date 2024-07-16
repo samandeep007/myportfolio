@@ -1,8 +1,9 @@
 import BlogModel from "@/models/Blog";
 import dbConnect from "@/lib/dbConnect";
-import { authOptions } from "../api/auth/[...nextauth]/options";
+import { authOptions } from "../auth/[...nextauth]/options";
 import { getServerSession } from "next-auth";
 import { uploadOnCloudinary } from "@/helpers/uploadImage";
+import mongoose from "mongoose";
 
 export const GET = async (request: Request) => {
     await dbConnect();
@@ -49,25 +50,30 @@ export const GET = async (request: Request) => {
 export const POST = async (request: Request) => {
     await dbConnect();
     try {
-        const session = await getServerSession(authOptions);
-        if (!session || !session.user) {
-            return Response.json({
-                success: false,
-                message: "Not authorized"
-            }, {status: 401})
-        }
+       
 
-        const userId = session.user._id;
-        const { title, content, isArchived, featuredImage, tags } = await request.json();
+        const userId = new mongoose.Schema.Types.ObjectId("sfdfdfdfdf");
+        const formData = await request.formData();
 
-        if ([title, content, isArchived, featuredImage, tags].some(field => !field?.trim())) {
+
+        const title = formData.get("title") as string || null;
+        const content = formData.get("content") as string || null;
+        const isArchived = formData.get("content") as string || null;
+        const tags = formData.get("content") as string || null;
+        const image = formData.get("image") as File || null;
+
+        if ([title, content, isArchived, image, tags].some(field => !field)) {
             return Response.json({
                 success: false,
                 message: "Fields are missing"
             }, { status: 400 })
+
         }
 
-        const imageUrl = await uploadOnCloudinary(featuredImage);
+              // Convert the image file to a buffer for Cloudinary
+        const imageBuffer = await image.arrayBuffer();
+
+        const imageUrl = await uploadOnCloudinary(imageBuffer);
         if (!imageUrl) {
             return Response.json({
                 success: false,
@@ -79,7 +85,7 @@ export const POST = async (request: Request) => {
             userId: userId,
             title: title,
             content: content,
-            tags: tags,
+            tags: tags?.split(", "),
             isArchived: isArchived,
             featuredImage: imageUrl
         })

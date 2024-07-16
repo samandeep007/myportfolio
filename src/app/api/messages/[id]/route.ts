@@ -20,7 +20,9 @@ export const GET = async(request: Request, {params}: {params: {id: string}}) => 
         if(!message){
             return Response.json({success: false, message: "Message not found"}, {status: 404})
         }
-        return Response.json({success: true, message: "Message retrieved successfully!", data: message}, {status: 200});
+        const reply = user.replies.filter(reply => reply.messageId === id);
+
+        return Response.json({success: true, message: "Message retrieved successfully!", data: {...message, ...reply}}, {status: 200});
         
     } catch (error) {
         console.error("Message retrieval failed", error);

@@ -1,4 +1,4 @@
-import UserModel from "@/models/User";
+import UserModel, { Reply } from "@/models/User";
 import dbConnect from "@/lib/dbConnect";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../auth/[...nextauth]/options";
@@ -25,6 +25,30 @@ export const GET = async(request: Request, {params}: {params: {id: string}}) => 
     } catch (error) {
         console.error("Message retrieval failed", error);
         return Response.json({success: false, message: "Message retrieval faied"},{status: 500});
+    }
+}
+
+export const POST = async(request: Request, {params}: {params: {id: string}}) => {
+    await dbConnect();
+    try {
+        const session = await getServerSession(authOptions);
+        if(!session || !session.user){
+            return Response.json({success: false, message: "Unauthorized"}, {status: 401});
+        }
+        const id = params.id;
+        const {content} = await request.json();
+        const user = await UserModel.findById(id);
+        if(!user){
+            return Response.json({success: false, message: "User not found!"}, {status: 404});
+        }
+        const reply = {messageId: id, content: content};
+        user.replies.push(reply as Reply);
+        await user.save({validateBeforeSave: false});
+        return Response.json({success: true, message: "Reply sent successfully"}, {status: 200});
+        
+    } catch (error) {
+        console.error("Error sending reply", error);
+        return Response.json({success: false, message: "Error sending reply!"},{status: 500})
     }
 }
 

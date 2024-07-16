@@ -25,7 +25,7 @@ export const POST = async(request: Request) => {
             return Response.json({success: false, message: "Unable to send message"},{status: 400})
         }
 
-        return Response.json({success: false, message: "Message sent successfully"}, {status: 200});
+        return Response.json({success: true, message: "Message sent successfully"}, {status: 200});
 
     } catch (error) {
         console.error("Something went wrong while sending the message");

@@ -1,6 +1,7 @@
 import mongoose, { Schema, Document } from 'mongoose';
 
 export interface Message extends Document {
+    senderName: string
     senderEmail: string;
     subject: string;
     content: string;
@@ -12,6 +13,12 @@ export const MessageSchema: Schema<Message> = new Schema({
         type: String,
         required: true,
         lowercase: true,
+        trim: true
+    },
+
+    senderName: {
+        type: String,
+        required: true,
         trim: true
     },
 

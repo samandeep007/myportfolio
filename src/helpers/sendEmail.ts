@@ -29,7 +29,7 @@ export async function sendEmail({email, username, verifyCode, type, message, nam
             options = {
                 from: '3S Universe" <noreply@web-trade.biz>',
                 to: email,
-                subject: 'Verify your email | 3S Universe',
+                subject: 'Thanks for contacting! | 3S Universe',
                 html: render(ContactEmail({name, message}))
             }
         }

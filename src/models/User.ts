@@ -37,7 +37,6 @@ export const MessageSchema: Schema<Message> = new Schema({
 
     reply: {
         type: String,
-        required: true,
         trim: true
     },
 

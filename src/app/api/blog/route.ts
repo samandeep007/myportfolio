@@ -3,7 +3,7 @@ import dbConnect from "@/lib/dbConnect";
 import { authOptions } from "../auth/[...nextauth]/options";
 import { getServerSession } from "next-auth";
 import { uploadOnCloudinary } from "@/helpers/uploadImage";
-import mongoose from "mongoose";
+
 
 export const GET = async (request: Request) => {
     await dbConnect();

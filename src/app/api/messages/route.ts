@@ -2,6 +2,8 @@ import UserModel from "@/models/User";
 import dbConnect from "@/lib/dbConnect";
 import { Message } from "@/models/User";
 import { sendEmail } from "@/helpers/sendEmail";
+import { getServerSession } from "next-auth";
+import { authOptions } from "../auth/[...nextauth]/options";
 
 export const POST = async(request: Request) => {
     await dbConnect();
@@ -29,5 +31,29 @@ export const POST = async(request: Request) => {
 
     } catch (error) {
         console.error("Something went wrong while sending the message");
+    }
+}
+
+
+export const GET = async(request: Request) => {
+    await dbConnect();
+    try {
+        const session = await getServerSession(authOptions);
+        if(!session || !session.user){
+            return Response.json({success: false, message: "Unauthorized"}, {status: 400})
+        }
+        const userId = session.user._id;
+        const user = await UserModel.findById(userId);
+        if(!user){
+            return Response.json({success: false, message: "Error 404: User not found"},{status: 404});
+        }
+        if(!user.messages.length){
+            return Response.json({success: true, message: "User inbox is empty", data: []}, {status: 200});
+        }
+        return Response.json({success: true, message: "User messages retrieved successfully", data: user.messages}, {status: 200});
+        
+    } catch (error) {
+        console.error("Error fetching messages", error);
+        return Response.json({success: false, message: "Error fetching messages"}, {status: 500});
     }
 }

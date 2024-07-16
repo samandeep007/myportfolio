@@ -7,7 +7,7 @@ cloudinary.v2.config({
   api_secret: process.env.CLOUDINARY_API_SECRET
 });
 
-export const uploadOnCloudinary = async (imageBuffer: ArrayBuffer): Promise<string | null> => {
+export const uploadOnCloudinary = async (imageBuffer: Buffer): Promise<string | null> => {
   return new Promise((resolve, reject) => {
     cloudinary.v2.uploader.upload_stream(
       { resource_type: 'image' },

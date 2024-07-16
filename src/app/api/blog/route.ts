@@ -50,9 +50,17 @@ export const GET = async (request: Request) => {
 export const POST = async (request: Request) => {
     await dbConnect();
     try {
-       
 
-        const userId = new mongoose.Schema.Types.ObjectId("sfdfdfdfdf");
+        const session = await getServerSession(authOptions);
+        if (!session || !session.user) {
+            return Response.json({
+                success: false,
+                message: "Not authorized"
+            }, {
+                status: 403
+            })
+        }
+        const userId = session.user._id
         const formData = await request.formData();
 
 
@@ -71,9 +79,10 @@ export const POST = async (request: Request) => {
         }
 
               // Convert the image file to a buffer for Cloudinary
-        const imageBuffer = await image.arrayBuffer();
+              const imageBuffer = Buffer.from(await image.arrayBuffer());
+              const imageUrl = await uploadOnCloudinary(imageBuffer);
 
-        const imageUrl = await uploadOnCloudinary(imageBuffer);
+              console.log(imageUrl)
         if (!imageUrl) {
             return Response.json({
                 success: false,

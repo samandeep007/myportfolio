@@ -1,4 +1,4 @@
-import mongoose, { Schema, Document } from 'mongoose';
+import mongoose, { Schema, Document, Mongoose } from 'mongoose';
 
 export interface Message extends Document {
     senderName: string
@@ -7,6 +7,11 @@ export interface Message extends Document {
     content: string;
     reply: string;
     createdAt: Date;
+}
+
+export interface Reply extends Document {
+    messageId: string;
+    content: string
 }
 
 export const MessageSchema: Schema<Message> = new Schema({
@@ -47,6 +52,20 @@ export const MessageSchema: Schema<Message> = new Schema({
     }
 })
 
+export const ReplySchema: Schema<Reply> = new Schema({
+   messageId: {
+    type: String,
+    required: true,
+    trim: true
+   },
+
+   content: {
+    type: String, 
+    required: true,
+    trim: true
+   }
+}, {timestamps: true});
+
 
 export interface User extends Document {
     username: string;
@@ -56,7 +75,8 @@ export interface User extends Document {
     isVerified: boolean;
     verifyCode: string;
     verifyCodeExpiry: Date;
-    messages: Message[]
+    messages: Message[];
+    replies: Reply[];
 }
 
 export const UserSchema: Schema<User> = new Schema({
@@ -102,7 +122,9 @@ export const UserSchema: Schema<User> = new Schema({
         required: [true, "verify code expiry is required"]
     },
 
-    messages: [MessageSchema]
+    messages: [MessageSchema],
+
+    replies: [ReplySchema]
 }, { timestamps: true });
 
 const UserModel = mongoose.models.User as mongoose.Model<User> || mongoose.model<User>("User", UserSchema);

@@ -17,14 +17,18 @@ export const POST = async (request: Request) => {
             return Response.json({success: false, message: "User is not verified. Verify or signUp again"}, {status: 400})
         }
         const verifyCode = String(Math.floor(100000 + Math.random() * 999999));
+        const expiryDate = new Date();
+        
         user.verifyCode = verifyCode;
+        user.verifyCodeExpiry = new Date(expiryDate.getHours() + 1);
+        
         await user.save({validateBeforeSave: false});
         const emailResponse = await sendEmail({email: user.email, username: user.username, verifyCode: verifyCode, type: "PasswordReset", message:"", name:user.fullName});
         if(!emailResponse.success){
             return Response.json({success: false, message: "Sending verification email failed"}, {status: 400})
         }
         return Response.json({success: true, message: "Password reset email sent"}, {status: 200})
-        
+
     } catch (error) {
         console.error("Something went wrong!", error);
         return Response.json({ success: false, message: "Something went wrong" }, { status: 500 });

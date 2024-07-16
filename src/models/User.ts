@@ -5,6 +5,7 @@ export interface Message extends Document {
     senderEmail: string;
     subject: string;
     content: string;
+    reply: string;
     createdAt: Date;
 }
 
@@ -29,6 +30,12 @@ export const MessageSchema: Schema<Message> = new Schema({
     },
 
     content: {
+        type: String,
+        required: true,
+        trim: true
+    },
+
+    reply: {
         type: String,
         required: true,
         trim: true

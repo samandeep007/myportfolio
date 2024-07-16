@@ -17,7 +17,7 @@ export const POST = async(request: Request) => {
             return Response.json({success: false, message: "User doesn't exist"}, {status: 400});
         }
 
-        const message = {senderEmail: senderEmail, senderName: senderName, subject: subject, content: content, createdAt: new Date()};
+        const message = {senderEmail: senderEmail, senderName: senderName, subject: subject, content: content, reply: "", createdAt: new Date()};
 
         user.messages.push(message as Message);
         await user.save({validateBeforeSave: false});
@@ -51,7 +51,7 @@ export const GET = async(request: Request) => {
             return Response.json({success: true, message: "User inbox is empty", data: []}, {status: 200});
         }
         return Response.json({success: true, message: "User messages retrieved successfully", data: user.messages}, {status: 200});
-        
+
     } catch (error) {
         console.error("Error fetching messages", error);
         return Response.json({success: false, message: "Error fetching messages"}, {status: 500});

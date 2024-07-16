@@ -11,7 +11,7 @@ export interface Message extends Document {
 
 export interface Reply extends Document {
     messageId: string;
-    content: string
+    content: string;
 }
 
 export const MessageSchema: Schema<Message> = new Schema({
@@ -37,11 +37,6 @@ export const MessageSchema: Schema<Message> = new Schema({
     content: {
         type: String,
         required: true,
-        trim: true
-    },
-
-    reply: {
-        type: String,
         trim: true
     },
 
@@ -125,6 +120,7 @@ export const UserSchema: Schema<User> = new Schema({
     messages: [MessageSchema],
 
     replies: [ReplySchema]
+    
 }, { timestamps: true });
 
 const UserModel = mongoose.models.User as mongoose.Model<User> || mongoose.model<User>("User", UserSchema);

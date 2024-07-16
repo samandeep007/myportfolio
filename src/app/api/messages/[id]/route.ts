@@ -33,19 +33,24 @@ export const GET = async(request: Request, {params}: {params: {id: string}}) => 
 export const POST = async(request: Request, {params}: {params: {id: string}}) => {
     await dbConnect();
     try {
-        const session = await getServerSession(authOptions);
-        if(!session || !session.user){
-            return Response.json({success: false, message: "Unauthorized"}, {status: 401});
-        }
+        // const session = await getServerSession(authOptions);
+        // if(!session || !session.user){
+        //     return Response.json({success: false, message: "Unauthorized"}, {status: 401});
+        // }
         const id = params.id;
-        const {content} = await request.json();
-        const user = await UserModel.findById(id);
+        const {content, username} = await request.json();
+      
+        const user = await UserModel.findOne({username: username});
         if(!user){
             return Response.json({success: false, message: "User not found!"}, {status: 404});
         }
+
         const reply = {messageId: id, content: content};
+      
         user.replies.push(reply as Reply);
+      
         await user.save({validateBeforeSave: false});
+
         return Response.json({success: true, message: "Reply sent successfully"}, {status: 200});
         
     } catch (error) {

@@ -5,13 +5,13 @@ export interface Message extends Document {
     senderEmail: string;
     subject: string;
     content: string;
-    reply: string;
     createdAt: Date;
 }
 
 export interface Reply extends Document {
     messageId: string;
     content: string;
+    createdAt: Date;
 }
 
 export const MessageSchema: Schema<Message> = new Schema({
@@ -48,18 +48,24 @@ export const MessageSchema: Schema<Message> = new Schema({
 })
 
 export const ReplySchema: Schema<Reply> = new Schema({
-   messageId: {
-    type: String,
-    required: true,
-    trim: true
-   },
+    messageId: {
+        type: String,
+        required: true,
+        trim: true
+    },
 
-   content: {
-    type: String, 
-    required: true,
-    trim: true
-   }
-}, {timestamps: true});
+    content: {
+        type: String,
+        required: true,
+        trim: true
+    },
+
+    createdAt: {
+        type: Date,
+        required: true,
+        default: Date.now
+    }
+});
 
 
 export interface User extends Document {
@@ -70,8 +76,9 @@ export interface User extends Document {
     isVerified: boolean;
     verifyCode: string;
     verifyCodeExpiry: Date;
-    messages: Message[];
     replies: Reply[];
+    messages: Message[];
+   
 }
 
 export const UserSchema: Schema<User> = new Schema({
@@ -120,7 +127,7 @@ export const UserSchema: Schema<User> = new Schema({
     messages: [MessageSchema],
 
     replies: [ReplySchema]
-    
+
 }, { timestamps: true });
 
 const UserModel = mongoose.models.User as mongoose.Model<User> || mongoose.model<User>("User", UserSchema);

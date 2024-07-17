@@ -17,7 +17,7 @@ export const POST = async(request: Request) => {
             return Response.json({success: false, message: "User doesn't exist"}, {status: 400});
         }
 
-        const message = {senderEmail: senderEmail, senderName: senderName, subject: subject, content: content, reply: "", createdAt: new Date()};
+        const message = {senderEmail: senderEmail, senderName: senderName, subject: subject, content: content, createdAt: new Date()};
 
         user.messages.push(message as Message);
         await user.save({validateBeforeSave: false});

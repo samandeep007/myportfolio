@@ -6,12 +6,7 @@ export interface Message extends Document {
     subject: string;
     content: string;
     createdAt: Date;
-}
-
-export interface Reply extends Document {
-    messageId: string;
-    content: string;
-    createdAt: Date;
+    reply: string;
 }
 
 export const MessageSchema: Schema<Message> = new Schema({
@@ -40,32 +35,17 @@ export const MessageSchema: Schema<Message> = new Schema({
         trim: true
     },
 
+    reply: {
+        type: String,
+        trim: true
+    },
+
     createdAt: {
         type: Date,
         required: true,
         default: Date.now
     }
 })
-
-export const ReplySchema: Schema<Reply> = new Schema({
-    messageId: {
-        type: String,
-        required: true,
-        trim: true
-    },
-
-    content: {
-        type: String,
-        required: true,
-        trim: true
-    },
-
-    createdAt: {
-        type: Date,
-        required: true,
-        default: Date.now
-    }
-});
 
 
 export interface User extends Document {
@@ -76,8 +56,8 @@ export interface User extends Document {
     isVerified: boolean;
     verifyCode: string;
     verifyCodeExpiry: Date;
-    replies: Reply[];
     messages: Message[];
+  
    
 }
 
@@ -124,9 +104,7 @@ export const UserSchema: Schema<User> = new Schema({
         required: [true, "verify code expiry is required"]
     },
 
-    messages: [MessageSchema],
-
-    replies: [ReplySchema]
+    messages: [MessageSchema]
 
 }, { timestamps: true });
 

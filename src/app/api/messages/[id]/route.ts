@@ -1,4 +1,4 @@
-import UserModel, { Reply } from "@/models/User";
+import UserModel from "@/models/User";
 import dbConnect from "@/lib/dbConnect";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../auth/[...nextauth]/options";
@@ -11,6 +11,7 @@ export const GET = async (request: Request, { params }: { params: { id: string }
             return Response.json({ success: false, message: "Unauthorized" }, { status: 401 })
         }
         const userId = session.user._id;
+    
         const id = params.id;
         const user = await UserModel.findById(userId);
         if (!user) {
@@ -20,9 +21,8 @@ export const GET = async (request: Request, { params }: { params: { id: string }
         if (!message) {
             return Response.json({ success: false, message: "Message not found" }, { status: 404 })
         }
-        const reply = user.replies.filter(reply => reply.messageId === id);
 
-        return Response.json({ success: true, message: "Message retrieved successfully!", data: { ...message, ...reply } }, { status: 200 });
+        return Response.json({ success: true, message: "Message retrieved successfully!", data: message }, { status: 200 });
 
     } catch (error) {
         console.error("Message retrieval failed", error);
@@ -33,29 +33,34 @@ export const GET = async (request: Request, { params }: { params: { id: string }
 export const POST = async (request: Request, { params }: { params: { id: string } }) => {
     await dbConnect();
     try {
-        // const session = await getServerSession(authOptions);
-        // if(!session || !session.user){
-        //     return Response.json({success: false, message: "Unauthorized"}, {status: 401});
-        // }
-        const messageId = params.id;
-        const { content, username } = await request.json();
-
-        const user = await UserModel.findOne({ username: username });
-        if (!user) {
-            return Response.json({ success: false, message: "User not found!" }, { status: 404 });
+        const session = await getServerSession(authOptions);
+        if(!session || !session){
+            return Response.json({success: false, message: "Unauthorized"},{status: 401})
+        }
+        const userId = session.user._id;
+        const id = params.id;
+        const {reply} = await request.json();
+        const user = await UserModel.findById(userId);
+        if(!user){
+            return Response.json({success: false, message: "User not found"}, {status: 404})
+        }
+        const message = user.messages.find((message) => String(message._id) === id);
+        
+        if(!message){
+            return Response.json({success: false, message: "Message not found!"}, {status: 400});
         }
 
-        const reply = { messageId: messageId, content: content, createdAt: new Date() };
-        console.log(reply)
-        user.replies.push(reply as Reply);
+        const messageIndex = user.messages.indexOf(message);
+        message.reply = reply;
+        user.messages[messageIndex] = message;
+        
+        await user.save({validateBeforeSave: false});
 
-        await user.save({ validateBeforeSave: false });
-
-        return Response.json({ success: true, message: "Reply sent successfully" }, { status: 200 });
-
+        return Response.json({success: true, message: "Reply sent successfully"}, {status: 200})
+        
     } catch (error) {
-        console.error("Error sending reply", error);
-        return Response.json({ success: false, message: "Error sending reply!" }, { status: 500 })
+        console.error("Error replying to the message");
+        return Response.json({success: false, message: "Error replying to the message"}, {status: 500})
     }
 }
 

@@ -3,6 +3,7 @@ import ProjectModel from "@/models/Project";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../auth/[...nextauth]/options";
 import { uploadOnCloudinary } from "@/helpers/uploadImage";
+import FeatureModel from "@/models/Features";
 
 export const POST = async(request: Request) => {
     await dbConnect();
@@ -16,7 +17,7 @@ export const POST = async(request: Request) => {
         if(!projectId){
             return Response.json({success: false, message: "Something went wrong"}, {status: 500})
         }
-        const project = await ProjectModel.findById(projectId);
+        const project = await ProjectModel.findOne({_id: projectId, userId: session.user._id});
         if(!project){
             return Response.json({success: false, message: "Project doesn't exist"}, {status: 400});
         }
@@ -34,18 +35,12 @@ export const POST = async(request: Request) => {
             return Response.json({success: false, message: "Media upload failed"}, {status: 400})
         }
 
-        const feature = {
+        await FeatureModel.create({
             projectId: projectId,
             title: title,
             description: description,
             media: mediaUrl
-        }
-
-        
-
-
-
-       
+        })
 
         return Response.json({success: true, message: "Feature added successfully"}, {status: 200})
 

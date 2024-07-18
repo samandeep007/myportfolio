@@ -1,5 +1,5 @@
 import dbConnect from "@/lib/dbConnect";
-import ProjectModel, { Feature } from "@/models/Project";
+import ProjectModel from "@/models/Project";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../auth/[...nextauth]/options";
 import { uploadOnCloudinary } from "@/helpers/uploadImage";
@@ -42,6 +42,8 @@ export const POST = async(request: Request) => {
         }
 
         
+
+
 
        
 

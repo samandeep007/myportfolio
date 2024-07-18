@@ -3,7 +3,7 @@ import mongoose, {Schema, Document} from 'mongoose';
 export interface Feature extends Document {
     title: string;
     description: string;
-    image: string;
+    media: string;
 }
 
 const featureSchema:Schema<Feature> = new Schema({
@@ -18,7 +18,7 @@ const featureSchema:Schema<Feature> = new Schema({
         required: true,
         trim: true
     },
-    image: {
+    media: {
         type: String,
         required: true,
         trim: true

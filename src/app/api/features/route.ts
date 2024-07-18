@@ -11,7 +11,8 @@ export const POST = async(request: Request) => {
             return Response.json({success: false, message: "Unauthorized"}, {status: 401})
         }
         const formData = await request.formData();
-        const title
+        const title = formData.get('title') as string || null;
+        const 
         
     } catch (error) {
         console.error("Creating feature failed", error);

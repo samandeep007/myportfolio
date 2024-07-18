@@ -67,4 +67,6 @@ const projectSchema: Schema<Project> = new Schema({
     }
 }, {timestamps: true})
 
-export const ProjectModel = mongoose.models.Project as mongoose.Model<Project> || mongoose.model('Project', projectSchema);
+const ProjectModel = mongoose.models.Project as mongoose.Model<Project> || mongoose.model('Project', projectSchema);
+
+export default ProjectModel;

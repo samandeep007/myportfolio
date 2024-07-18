@@ -35,16 +35,18 @@ export const POST = async(request: Request) => {
         }
 
         const feature = {
+            projectId: projectId,
             title: title,
             description: description,
             media: mediaUrl
         }
 
-        project.features.push(feature as Feature);
-        await project.save({validateBeforeSave: false});
+        
+
+       
 
         return Response.json({success: true, message: "Feature added successfully"}, {status: 200})
-                
+
     } catch (error) {
         console.error("Creating feature failed", error);
         return Response.json({success: false, message: "Creating feature failed"}, {status: 500});

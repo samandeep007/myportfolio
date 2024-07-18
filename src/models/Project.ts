@@ -1,36 +1,12 @@
 import mongoose, {Schema, Document} from 'mongoose';
 
-export interface Feature extends Document {
-    title: string;
-    description: string;
-    media: string;
-}
 
-const featureSchema:Schema<Feature> = new Schema({
-    title: {
-        type: String,
-        required: true,
-        unique: true,
-        trim: true
-    },
-    description: {
-        type: String,
-        required: true,
-        trim: true
-    },
-    media: {
-        type: String,
-        required: true,
-        trim: true
-    }
-});
 
 
 export interface Project extends Document {
     userId: mongoose.Schema.Types.ObjectId;
     title: string;
     description: string;
-    features: [Feature];
     link: string;
     technologies: Array<String>
     image: string;
@@ -53,7 +29,6 @@ const projectSchema: Schema<Project> = new Schema({
         required: true,
         trim: true
     },
-    features: [featureSchema],
     link: {
         type: String,
         required: true,

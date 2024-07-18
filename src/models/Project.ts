@@ -27,6 +27,7 @@ const featureSchema:Schema<Feature> = new Schema({
 
 
 export interface Project extends Document {
+    userId: mongoose.Schema.Types.ObjectId;
     title: string;
     description: string;
     features: [Feature];
@@ -36,6 +37,12 @@ export interface Project extends Document {
 }
 
 const projectSchema: Schema<Project> = new Schema({
+    userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true,
+        trim: true
+    },
     title: {
         type: String,
         required: true,

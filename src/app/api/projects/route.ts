@@ -23,5 +23,3 @@ export const GET = async(request: Request) => {
         return Response.json({success: false, message: "Retrieving projects failed"},{status:500});
     }
 }
-
-export const POST = async

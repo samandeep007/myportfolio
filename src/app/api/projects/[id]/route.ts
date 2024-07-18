@@ -23,5 +23,3 @@ export const GET = async(request: Request, {params}: {params: {id: string}}) => 
         return Response.json({success: false, message: "Project retrieval failed"}, {status: 500});
     }
 }
-
-export const POST = async

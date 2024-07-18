@@ -1,7 +1,8 @@
 import dbConnect from "@/lib/dbConnect";
-import ProjectModel from "@/models/Project";
+import ProjectModel, { Feature } from "@/models/Project";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../auth/[...nextauth]/options";
+import { uploadOnCloudinary } from "@/helpers/uploadImage";
 
 export const POST = async(request: Request) => {
     await dbConnect();
@@ -11,9 +12,39 @@ export const POST = async(request: Request) => {
             return Response.json({success: false, message: "Unauthorized"}, {status: 401})
         }
         const formData = await request.formData();
+        const projectId = formData.get('projectId') as string || null;
+        if(!projectId){
+            return Response.json({success: false, message: "Something went wrong"}, {status: 500})
+        }
+        const project = await ProjectModel.findById(projectId);
+        if(!project){
+            return Response.json({success: false, message: "Project doesn't exist"}, {status: 400});
+        }
         const title = formData.get('title') as string || null;
-        const 
-        
+        const description = formData.get('description') as string || null;
+        const media = formData.get('media') as File || null;
+
+        if([title, description, media].some(field => field === null)){
+            return Response.json({success: false, message: "All fields are required"}, {status: 400})
+        }
+
+        const mediaBuffer = Buffer.from(await media.arrayBuffer());
+        const mediaUrl = await uploadOnCloudinary(mediaBuffer);
+        if(!mediaUrl){
+            return Response.json({success: false, message: "Media upload failed"}, {status: 400})
+        }
+
+        const feature = {
+            title: title,
+            description: description,
+            media: mediaUrl
+        }
+
+        project.features.push(feature as Feature);
+        await project.save({validateBeforeSave: false});
+
+        return Response.json({success: true, message: "Feature added successfully"}, {status: 200})
+                
     } catch (error) {
         console.error("Creating feature failed", error);
         return Response.json({success: false, message: "Creating feature failed"}, {status: 500});

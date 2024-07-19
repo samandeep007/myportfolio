@@ -8,7 +8,7 @@ export interface IEducation extends Document {
     startDate: Date;
     endDate: Date;
     grade: Number;
-    Activities: string;
+    activities: string;
     description: string;
     skills: Array<String>;
     media: string;
@@ -48,7 +48,7 @@ const EducationSchema: Schema<IEducation> = new Schema({
         type: Number,
         required: true
     },
-    Activities: {
+    activities: {
         type: String,
         trim: true
     },
